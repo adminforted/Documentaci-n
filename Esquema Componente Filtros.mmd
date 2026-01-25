@@ -1,0 +1,122 @@
+classDiagram
+    direction LR
+
+    %% =============================
+    %% ORQUESTADOR PRINCIPAL
+    %% =============================
+    class InformePage {
+        +Object filters
+        +string endpoint
+        +InformeConfig config
+        --
+        +setFilters(filters)
+        +getEndpoint(filters)
+        +render()
+    }
+
+    %% =============================
+    %% HOOK DE DATOS
+    %% =============================
+    class useInforme {
+        +Array data
+        +boolean loading
+        +Object error
+        --
+        +fetchData(endpoint)
+        +reload()
+    }
+
+    %% =============================
+    %% CONFIGURACIÓN DECLARATIVA
+    %% =============================
+    class InformeConfig {
+        +string title
+        +string description
+        +FilterConfig[] filters
+        +StatConfig[] stats
+        +ColumnConfig[] columns
+        +ActionConfig actions
+    }
+
+    class FilterConfig {
+        +string key
+        +string label
+        +string type
+        +string endpoint
+        +boolean required
+    }
+
+    class StatConfig {
+        +string key
+        +string label
+        +string type
+    }
+
+    class ColumnConfig {
+        +string field
+        +string header
+        +string type
+    }
+
+    %% =============================
+    %% PRESENTACIÓN PRINCIPAL
+    %% =============================
+    class InformMain {
+        +InformeConfig config
+        +Array data
+        +boolean loading
+        --
+        +render()
+    }
+
+    %% =============================
+    %% SUBCOMPONENTES UI
+    %% =============================
+    class InformHeader {
+        +string title
+        +string description
+        --
+        +render()
+    }
+
+    class InformFilters {
+        +FilterConfig[] filters
+        +Object values
+        --
+        +onChange()
+        +render()
+    }
+
+    class StatsCardsOverview {
+        +StatConfig[] stats
+        +Array data
+        --
+        +calculateStat()
+        +render()
+    }
+
+    class StatCard {
+        +string label
+        +number value
+        --
+        +render()
+    }
+
+    %% =============================
+    %% RELACIONES
+    %% =============================
+
+    InformePage --> useInforme : uses
+    InformePage --> InformeConfig : loads
+
+    InformePage --> InformMain : renders
+
+    InformMain --> InformHeader : contains
+    InformMain --> InformFilters : contains
+    InformMain --> StatsCardsOverview : contains
+
+    StatsCardsOverview --> StatCard : creates *
+
+    InformeConfig --> FilterConfig : defines *
+    InformeConfig --> StatConfig : defines *
+    InformeConfig --> ColumnConfig : defines *
